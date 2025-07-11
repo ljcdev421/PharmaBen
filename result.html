@@ -102,7 +102,7 @@
         // Pour chaque pharmacie, on compte le nombre de médicaments recherchés trouvés
         return pharmaciesBénin
           .map(pharm => {
-            const foundMeds = pharm.medicaments.filter(med => searchMeds.some(q => q.toLowerCase() === med.nom.toLowerCase()));
+            const foundMeds = pharm.medicaments.filter(med => searchMeds.some(q => med.nom.toLowerCase().includes(q.toLowerCase())));
             let distance = pharm.distance;
             if (userPosition && pharm.position) {
               distance = calcDistanceKm(userPosition.lat, userPosition.lng, pharm.position.lat, pharm.position.lng);
@@ -172,6 +172,16 @@
           };
           pharmacyList.appendChild(li);
         });
+        // Afficher un message par défaut dans la zone de détails si aucune pharmacie n'est sélectionnée
+        if (selectedIdx === null) {
+          pharmacyDetails.innerHTML = `
+            <div class="flex flex-col items-center justify-center w-full bg-blue-50/60 rounded-lg border border-blue-100 py-20">
+              <svg class="w-12 h-12 text-blue-300 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+              <p class="text-blue-700 text-lg font-medium text-center">Sélectionnez une pharmacie<br>pour voir les détails</p>
+            </div>
+          `;
+          pharmacyMap.style.display = 'none';
+        }
       }
 
       function renderPharmacyDetails(idx) {
